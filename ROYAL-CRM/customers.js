@@ -1,23 +1,22 @@
-const customers = [];
+const customers = {
+  list: [],
 
-function addCostumers() {
-  const username = process.argv.slice(2);
-  if (!username || username.length === 0) {
-    throw `ERROR: username is empty`;
-  }
+  addCostumers: function () {
+    const name = process.argv.slice(2);
+    if (!name || name.length === 0) {
+      throw `ERROR: name is empty`;
+    }
 
-  const tempPwd = Math.floor(Math.random() * 10000000);
+    this.list.push({
+      name: name,
+      id: this.list.length,
+    });
+  },
+  customersList: function () {
+    this.list.forEach((customer) => {
+      console.log(`ok. name: ${customer.name} was created.`);
+    });
+  },
+};
 
-  customers.push({
-    username: username,
-    password: tempPwd,
-  });
-
-  customers.forEach((customer) => {
-    console.log(
-      `ok. username: ${customer.username} with temporary password: ${customer.password}.`
-    );
-  });
-}
-
-addCostumers();
+module.exports = customers;
