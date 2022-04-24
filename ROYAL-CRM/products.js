@@ -8,6 +8,7 @@ function addProduct() {
 
   products.push({
     productname: productname,
+    id: products.length,
   });
 
   products.forEach((product) => {

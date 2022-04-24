@@ -8,6 +8,7 @@ function addOrder() {
 
   orders.push({
     ordername: ordername,
+    id: orders.length,
   });
 
   orders.forEach((order) => {
