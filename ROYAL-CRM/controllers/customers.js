@@ -48,7 +48,8 @@ const customers = {
 
     pool.getConnection(function (connErr, connection) {
       if (connErr) throw connErr;
-      const sql = "SELECT * FROM customers";
+      const sql =
+        "SELECT customers.name AS customer_name, customers.email,customers.phone,countries.name AS country_name FROM customers, countries WHERE customers.country_id=countries.id";
 
       connection.query(sql, function (sqlErr, result, fields) {
         if (sqlErr) throw sqlErr;
