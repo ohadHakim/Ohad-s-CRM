@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h3>form for export products</h3>
+    <form method="get" action="/products/export">
+        <button type="submit">Export Products</button>
+    </form>
+
+    <h3>Add customer</h3>
+    <form method="post" action="/products-add">
+        <div>
+            <label for="">Name:</label>
+            <input type="text" name="name">
+        </div>
+        <div>
+            <label for="">Description:</label>
+            <input type="text" name="description">
+        </div>
+        <div>
+            <label for="">Price:</label>
+            <input type="number" name="price">
+        </div>
+        <button type="submit">Add customer</button>
+    </form>
+</body>
+</html>

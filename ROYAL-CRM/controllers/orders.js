@@ -1,57 +1,71 @@
-const mysql = require("mysql2");
-const config = require("../config/dev");
-
-const pool = mysql.createPool({
-  host: config.DB_HOST,
-  user: config.DB_USER,
-  password: config.DB_PASSWORD,
-  database: config.DB_NAME,
-  waitForConnections: true,
-  connectionLimit: 5,
-  queueLimit: 0,
-});
+const database = require("./database");
 
 module.exports = {
-  // orders: [],
+  addOrder: async function (req, res, next) {
+    const qs = req.body;
+    const customer = qs.customer;
+    const product = qs.product;
+    const price = qs.price;
+    const quantity = qs.quantity;
 
-  addOrder: function (customer_id, product_id, price, quantity) {
-    // const ordername = process.argv.slice(2);
+    // customer_id, product_id, price, quantity
     if (!quantity || quantity <= 0) {
       throw `ERROR: quantity field is empty`;
     }
+    const sql =
+      "INSERT INTO orders(customer_id,product_id,price,quantity) VALUES (?,?,?,?)";
 
-    // this.orders.push({
-    //   ordername: ordername,
-    //   id: this.orders.length,
+    try {
+      const result = await database.getConnection(sql, [
+        customer,
+        product,
+        price,
+        quantity,
+      ]); //[rows,fields]
+      res.send(result[0]);
+    } catch (err) {
+      console.log(err);
+    }
+    // pool.getConnection(function (connErr, connection) {
+    //   if (connErr) throw connErr;
+    //   const sql =
+    //     "INSERT INTO orders(customer_id,product_id,price,quantity) VALUES (?,?,?,?)";
+
+    //   connection.query(
+    //     sql,
+    //     [customer_id, product_id, price, quantity],
+    //     function (sqlErr, result, fields) {
+    //       if (sqlErr) throw sqlErr;
+
+    //       console.log(result);
+    //     }
+    //   );
     // });
-    pool.getConnection(function (connErr, connection) {
-      if (connErr) throw connErr;
-      const sql =
-        "INSERT INTO orders(customer_id,product_id,price,quantity) VALUES (?,?,?,?)";
-
-      connection.query(
-        sql,
-        [customer_id, product_id, price, quantity],
-        function (sqlErr, result, fields) {
-          if (sqlErr) throw sqlErr;
-
-          console.log(result);
-        }
-      );
-    });
   },
 
-  ordersList: function (req, res) {
-    pool.getConnection(function (connErr, connection) {
-      if (connErr) throw connErr;
-      const sql = "SELECT * FROM orders";
+  ordersList: async function (req, res, next) {
+    const sql = "SELECT * FROM orders";
 
-      connection.query(sql, function (sqlErr, result, fields) {
-        if (sqlErr) throw sqlErr;
+    try {
+      // const connection = await database.getConnection();
+      const result = await database.getConnection(sql); //[rows,fields]
+      res.send(result[0]);
+    } catch (err) {
+      console.log(err);
+    }
 
-        res.send(result);
-      });
-    });
+    // (req, res, next) {
+    //   pool.getConnection(function (connErr, connection) {
+    //     if (connErr) throw connErr;
+    //     const sql = "SELECT * FROM orders";
+
+    //     connection.query(sql, function (sqlErr, result, fields) {
+    //       if (sqlErr) throw sqlErr;
+
+    //       res.send(result);
+    //     });
+    //   });
+
     // this.orders.forEach((order) => {
     //   console.log(`ok. Order name: ${order.ordername}.`);
     // });

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h3>form for export customers</h3>
+    <form method="get" action="/customers/export">
+        <button type="submit">Export Customers</button>
+    </form>
+
+    <h3>Add customer</h3>
+    <form method="post" action="/customers-add">
+        <div>
+            <label for="">Name:</label>
+            <input type="text" name="name">
+        </div>
+        <div>
+            <label for="">Phone:</label>
+            <input type="text" name="phone">
+        </div>
+        <div>
+            <label for="">Email:</label>
+            <input type="text" name="email">
+        </div>
+        <div>
+            <label for="">Country:</label>
+            <input type="number" name="country">
+        </div>
+        <button type="submit">Add customer</button>
+    </form>
+</body>
+</html>

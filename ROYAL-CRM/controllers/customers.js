@@ -1,63 +1,81 @@
-const mysql = require("mysql2");
-const config = require("../config/dev");
+const database = require("./database");
+const joi = require("joi");
+const fs = require("fs");
+const path = require("path");
+const { stringify } = require("querystring");
 
-const pool = mysql.createPool({
-  host: config.DB_HOST,
-  user: config.DB_USER,
-  password: config.DB_PASSWORD,
-  database: config.DB_NAME,
-  waitForConnections: true,
-  connectionLimit: 5,
-  queueLimit: 0,
-});
+module.exports = {
+  addCustomers: async function (req, res, next) {
+    const qs = req.body;
+    const schema = joi.object({
+      name: joi.string().required().min(2).max(200),
+      phone: joi
+        .string()
+        .required()
+        .regex(/^[0-9]\d{8,11}$/),
+      email: joi.string().required(),
+      country: joi.number().required(),
+    });
 
-const customers = {
-  // list: [],
-
-  addCostumers: function (name, phone, email, country_id) {
-    // const name = process.argv.slice(2);
-    if (!name || name.length === 0) {
-      throw `ERROR: name is empty`;
+    const { error } = schema.validate(qs);
+    if (error) {
+      res.send(`error adding customer: ${error}`);
+      return;
     }
 
-    // this.list.push({
-    //   name: name,
-    //   id: this.list.length,
-    // });
+    const sql =
+      "INSERT INTO customers(name,phone,email,country_id) VALUES (?,?,?,?);";
 
-    pool.getConnection(function (connErr, connection) {
-      if (connErr) throw connErr;
-      const sql =
-        "INSERT INTO customers(name,phone,email,country_id) VALUES (?,?,?,?)";
-
-      connection.query(
-        sql,
-        [name, phone, email, country_id],
-        function (sqlErr, result, fields) {
-          if (sqlErr) throw sqlErr;
-          console.log(fields);
-          console.log(result);
-        }
-      );
-    });
+    try {
+      const result = await database.getConnection(sql, [
+        qs.name,
+        qs.phone,
+        qs.email,
+        qs.country,
+      ]); //[rows,fields]
+      res.send(result[0]);
+    } catch (err) {
+      console.log(err);
+    }
   },
-  customersList: function (req, res) {
-    // this.list.forEach((customer) => {
-    //   console.log(`ok. name: ${customer.name} was created.`);
-    // });
+  customersList: async function (req, res, next) {
+    const sql =
+      "SELECT customers.name AS customer_name, customers.email,customers.phone,countries.name AS country_name FROM customers, countries WHERE customers.country_id=countries.id";
+    try {
+      // const connection = await database.getConnection();
+      const result = await database.getConnection(sql); //[rows,fields]
+      res.send(result[0]);
+    } catch (err) {
+      console.log(err);
+    }
+  },
 
-    pool.getConnection(function (connErr, connection) {
-      if (connErr) throw connErr;
-      const sql =
-        "SELECT customers.name AS customer_name, customers.email,customers.phone,countries.name AS country_name FROM customers, countries WHERE customers.country_id=countries.id";
+  //todo: delete customer
+  //sql: DROP
+  deleteCustomer: async function (req, res, next) {},
 
-      connection.query(sql, function (sqlErr, result, fields) {
-        if (sqlErr) throw sqlErr;
+  //todo: export all customers to file
+  //sql: SELECT
+  exportCustomers: async function (req, res, next) {
+    const sql =
+      "SELECT customers.name AS customer_name, customers.email,customers.phone,countries.name AS country_name FROM customers, countries WHERE customers.country_id=countries.id ORDER BY customers.name ASC ";
 
-        return res.send(result);
+    try {
+      const result = await database.getConnection(sql);
+      const now = new Date().getTime();
+      const filePath = path.join(__dirname, "../files", `customers-${now}.txt`);
+      const stream = fs.createWriteStream(filePath);
+
+      stream.on("open", function () {
+        stream.write(JSON.stringify(result[0]));
+        stream.end();
       });
-    });
+
+      stream.on("finish", function () {
+        res.send(`Success. File at: ${filePath}`);
+      });
+    } catch (err) {
+      throw err;
+    }
   },
 };
-
-module.exports = customers;
