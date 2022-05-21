@@ -49,13 +49,6 @@ module.exports = {
       console.log(err);
     }
   },
-
-  //todo: delete customer
-  //sql: DROP
-  deleteCustomer: async function (req, res, next) {},
-
-  //todo: export all customers to file
-  //sql: SELECT
   exportCustomers: async function (req, res, next) {
     const sql =
       "SELECT customers.name AS customer_name, customers.email,customers.phone,countries.name AS country_name FROM customers, countries WHERE customers.country_id=countries.id ORDER BY customers.name ASC ";
@@ -78,4 +71,7 @@ module.exports = {
       throw err;
     }
   },
+  //todo: delete customer
+  //sql: DROP
+  deleteCustomer: async function (req, res, next) {},
 };
