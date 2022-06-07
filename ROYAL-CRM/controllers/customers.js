@@ -13,7 +13,10 @@ module.exports = {
         .string()
         .required()
         .regex(/^[0-9]\d{8,11}$/),
-      email: joi.string().required(),
+      email: joi
+        .string()
+        .required()
+        .regex(/(\w[-._\w]*\w@\w[-._\w]*\w\.\w{2,3})/),
       country: joi.number().required(),
     });
 
@@ -40,7 +43,7 @@ module.exports = {
   },
   customersList: async function (req, res, next) {
     const sql =
-      "SELECT customers.name AS customer_name, customers.email,customers.phone,countries.name AS country_name FROM customers, countries WHERE customers.country_id=countries.id";
+      "SELECT customers.name AS customer_name, customers.email,customers.phone,countries.name AS country_name FROM customers, countries WHERE customers.country_id=countries.id ORDER BY customers.name ASC";
     try {
       // const connection = await database.getConnection();
       const result = await database.getConnection(sql); //[rows,fields]

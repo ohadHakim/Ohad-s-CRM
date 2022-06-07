@@ -9,11 +9,8 @@ module.exports = {
     const qs = req.body;
     const schema = joi.object({
       name: joi.string().required().min(2).max(200),
-      description: joi.string().required(),
-      price: joi
-        .string()
-        .required()
-        .regex(/^[0-9]\d{8,11}$/),
+      description: joi.string().required().min(2).max(300),
+      price: joi.string().required(),
     });
     const sql = "INSERT INTO products(name,description,price) VALUES (?,?,?)";
 
