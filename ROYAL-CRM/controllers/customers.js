@@ -43,10 +43,34 @@ module.exports = {
     }
   },
   customersList: async function (req, res, next) {
-    const sql =
-      "SELECT customers.name AS customer_name, customers.email,customers.phone,countries.name AS country_name FROM customers, countries WHERE customers.country_id=countries.id ORDER BY customers.name ASC";
+    const param = req.query; // get method
+    //  const param = req.body;  // post method
+
+    const schema = joi.object({
+      column: joi
+        .string()
+        .valid("name", "email", "country_name")
+        .default("name"),
+      sort: joi.string().valid("ASC", "DESC").default("ASC"),
+    });
+
+    const { error, value } = schema.validate(param);
+
+    if (error) {
+      console.log(error);
+      res.status(400).send("add failed");
+      return;
+    }
+
+    const fieldsMap = new Map([
+      ["name", "customers.name"],
+      ["email", "customers.email"],
+      ["country_name", "countries.name"],
+    ]);
+    const sql = `SELECT customers.name AS customer_name, customers.email,customers.phone,countries.name AS country_name FROM customers, countries WHERE customers.country_id=countries.id ORDER BY ${fieldsMap.get(
+      value.column
+    )} ${value.sort}`;
     try {
-      // const connection = await database.getConnection();
       const result = await database.getConnection(sql); //[rows,fields]
       res.send(result[0]);
     } catch (err) {
