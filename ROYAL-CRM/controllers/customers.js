@@ -3,6 +3,7 @@ const joi = require("joi");
 const fs = require("fs");
 const path = require("path");
 const { stringify } = require("querystring");
+const fileMgmt = require("../shared/fileMgmt");
 
 module.exports = {
   addCustomers: async function (req, res, next) {
@@ -56,23 +57,7 @@ module.exports = {
     const sql =
       "SELECT customers.name AS customer_name, customers.email,customers.phone,countries.name AS country_name FROM customers, countries WHERE customers.country_id=countries.id ORDER BY customers.name ASC ";
 
-    try {
-      const result = await database.getConnection(sql);
-      const now = new Date().getTime();
-      const filePath = path.join(__dirname, "../files", `customers-${now}.txt`);
-      const stream = fs.createWriteStream(filePath);
-
-      stream.on("open", function () {
-        stream.write(JSON.stringify(result[0]));
-        stream.end();
-      });
-
-      stream.on("finish", function () {
-        res.send(`Success. File at: ${filePath}`);
-      });
-    } catch (err) {
-      throw err;
-    }
+    fileMgmt.exportToFile(res, sql, "customers");
   },
   //todo: delete customer
   //sql: DROP

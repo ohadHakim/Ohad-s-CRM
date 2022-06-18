@@ -1,4 +1,5 @@
 const database = require("./database");
+const fileMgmt = require("../shared/fileMgmt");
 
 module.exports = {
   addOrder: async function (req, res, next) {
@@ -53,21 +54,15 @@ module.exports = {
     } catch (err) {
       console.log(err);
     }
+  },
 
-    // (req, res, next) {
-    //   pool.getConnection(function (connErr, connection) {
-    //     if (connErr) throw connErr;
-    //     const sql = "SELECT * FROM orders";
+  exportOrders: function (req, res, next) {
+    const sql =
+      "SELECT orders.order_time, orders.price, orders.quantity, " +
+      "orders.product_name, orders.product_desc, orders.product_image, " +
+      "cust.name, cust.phone, cust.email FROM orders orders LEFT JOIN customers cust " +
+      "ON orders.id = cust.id ORDER BY orders.id ASC;";
 
-    //     connection.query(sql, function (sqlErr, result, fields) {
-    //       if (sqlErr) throw sqlErr;
-
-    //       res.send(result);
-    //     });
-    //   });
-
-    // this.orders.forEach((order) => {
-    //   console.log(`ok. Order name: ${order.ordername}.`);
-    // });
+    fileMgmt.exportToFile(res, sql, "orders");
   },
 };
