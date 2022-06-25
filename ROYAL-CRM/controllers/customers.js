@@ -1,7 +1,7 @@
 const database = require("./database");
 const joi = require("joi");
-const fs = require("fs");
-const path = require("path");
+// const fs = require("fs");
+// const path = require("path");
 const { stringify } = require("querystring");
 const fileMgmt = require("../shared/fileMgmt");
 
@@ -29,7 +29,7 @@ module.exports = {
 
     const sql =
       "INSERT INTO customers(name,phone,email,country_id) VALUES (?,?,?,?);";
-
+    D;
     try {
       const result = await database.getConnection(sql, [
         qs.name,
@@ -84,6 +84,6 @@ module.exports = {
     fileMgmt.exportToFile(res, sql, "customers");
   },
   //todo: delete customer
-  //sql: DROP
+  //sql: DELETE
   deleteCustomer: async function (req, res, next) {},
 };
