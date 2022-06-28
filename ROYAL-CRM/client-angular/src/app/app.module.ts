@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { ReactiveFormsModule } from '@angular/forms';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -11,6 +12,8 @@ import { CustomersComponent } from './customers/customers.component';
 import { ProductsComponent } from './products/products.component';
 import { OrdersComponent } from './orders/orders.component';
 import { SignupComponent } from './signup/signup.component';
+import { LoginComponent } from './login/login.component';
+import { SessionService } from './services/session.service';
 
 @NgModule({
   declarations: [
@@ -22,13 +25,11 @@ import { SignupComponent } from './signup/signup.component';
     CustomersComponent,
     ProductsComponent,
     OrdersComponent,
-    SignupComponent
+    SignupComponent,
+    LoginComponent,
   ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule
-  ],
-  providers: [],
-  bootstrap: [AppComponent]
+  imports: [BrowserModule, AppRoutingModule, ReactiveFormsModule],
+  providers: [SessionService],
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}
