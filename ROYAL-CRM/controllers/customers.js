@@ -29,7 +29,6 @@ module.exports = {
 
     const sql =
       "INSERT INTO customers(name,phone,email,country_id) VALUES (?,?,?,?);";
-    D;
     try {
       const result = await database.getConnection(sql, [
         qs.name,
@@ -67,23 +66,57 @@ module.exports = {
       ["email", "customers.email"],
       ["country_name", "countries.name"],
     ]);
-    const sql = `SELECT customers.name AS customer_name, customers.email,customers.phone,countries.name AS country_name FROM customers, countries WHERE customers.country_id=countries.id ORDER BY ${fieldsMap.get(
+    const sql = `SELECT customers.name, customers.email,customers.phone,countries.name AS country_name FROM customers, countries WHERE customers.country_id=countries.id ORDER BY ${fieldsMap.get(
       value.column
     )} ${value.sort}`;
     try {
       const result = await database.getConnection(sql); //[rows,fields]
-      res.send(result[0]);
+      // res.set("Access-Control-Allow-Origin", "*");
+      res.json(result[0]);
     } catch (err) {
       console.log(err);
     }
   },
   exportCustomers: async function (req, res, next) {
     const sql =
-      "SELECT customers.name AS customer_name, customers.email,customers.phone,countries.name AS country_name FROM customers, countries WHERE customers.country_id=countries.id ORDER BY customers.name ASC ";
+      "SELECT customers.name, customers.email,customers.phone,countries.name AS country_name FROM customers, countries WHERE customers.country_id=countries.id ORDER BY customers.name ASC ";
 
     fileMgmt.exportToFile(res, sql, "customers");
   },
-  //todo: delete customer
-  //sql: DELETE
-  deleteCustomer: async function (req, res, next) {},
+  findCustomer: async function (req, res, next) {
+    const param = req.query;
+
+    const schema = joi.object({
+      search: joi.string().required().min(2),
+    });
+
+    const { error, value } = schema.validate(param);
+
+    if (error) {
+      res.status(400).send(`search error: ${error}`);
+      throw error;
+    }
+
+    const searchQuery = `%${value.search}%`;
+
+    const sql = `SELECT customers.id, customers.name, customers.phone, customers.email,   
+        countries.id AS country_id, countries.name AS country_name, countries.country_code  
+        FROM customers LEFT JOIN countries ON customers.country_id = countries.id 
+        WHERE customers.name LIKE ? OR customers.email LIKE ? OR customers.country_id LIKE ? 
+        ORDER BY customers.name ASC;`;
+
+    try {
+      const result = await database.getConnection(sql, [
+        searchQuery,
+        searchQuery,
+        searchQuery,
+      ]);
+
+      // res.set("Access-Control-Allow-Origin", "*");
+      res.json(result[0]);
+    } catch (err) {
+      res.status(400).send(`search error: ${err}`);
+      // throw error;
+    }
+  },
 };

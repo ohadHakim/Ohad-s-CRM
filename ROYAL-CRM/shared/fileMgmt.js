@@ -12,11 +12,8 @@ module.exports = {
       const result = await database.getConnection(sql);
 
       const now = new Date().getTime(); // moment.js
-      const filePath = path.join(
-        __dirname,
-        "../files",
-        `${filePrefix}-${now}.txt`
-      );
+      const fileName = `${filePrefix}-${now}.txt`;
+      const filePath = path.join(__dirname, "../files", fileName);
       const stream = fs.createWriteStream(filePath);
 
       stream.on("open", function () {
@@ -25,7 +22,9 @@ module.exports = {
       });
 
       stream.on("finish", function () {
-        res.send(`Success. File at: ${filePath}`);
+        // res.send(`Success. File at: ${filePath}`);
+        // res.set("Access-Control-Allow-Origin", "*");
+        res.json({ name: fileName });
       });
     } catch (err) {
       throw err;

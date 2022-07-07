@@ -1,1 +1,33 @@
-<p>customers works!</p>
+<!-- <p *ngFor="let customer of customers">
+    {{customer.customer_name}}
+</p> -->
+
+
+<h1>Customers (<span>{{customersTotal()}}</span>)</h1>
+
+<div>
+    <input (keydown)="findCustomer($event)" [(ngModel)]="searchFieldValue" type="text"
+        placeholder="Search by name, email, country">
+        <button (click)="clearSearch()">X</button>
+
+    <button (click)="exportCustomersData()" class="ms-4">Export</button>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name <button (click)="sortCustomers('name')">{{displaySort('name')}}</button></th>
+            <th>Email<button (click)="sortCustomers('email')">{{displaySort('email')}}</button></th>
+            <th>Phone</th>
+            <th>Country<button (click)="sortCustomers('country_name')">{{displaySort('country_name')}}</button></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let customer of customers">
+            <td>{{customer.name}}</td>
+            <td>{{customer.email}}</td>
+            <td>{{customer.phone}}</td>
+            <td>{{customer.country_name}}</td>
+        </tr>
+    </tbody>
+</table>
