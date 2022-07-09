@@ -3,31 +3,36 @@
 </p> -->
 
 
-<h1>Customers (<span>{{customersTotal()}}</span>)</h1>
+<h2 class="my-4 py-4">Customers <small class="text-secondery">({{customersTotal()}})</small> </h2>
 
-<div>
-    <input (keydown)="findCustomer($event)" [(ngModel)]="searchFieldValue" type="text"
-        placeholder="Search by name, email, country">
-        <button (click)="clearSearch()">X</button>
+<div class="p-3">
 
-    <button (click)="exportCustomersData()" class="ms-4">Export</button>
+    <div>
+        <input (keydown)="findCustomer($event)" [(ngModel)]="searchFieldValue" type="text"
+            placeholder="Search by name, email, country">
+            <button (click)="clearSearch()">
+                <i class="bi-x-lg"></i>
+            </button>
+
+        <button (click)="exportCustomersData()" class=" btn btn-primary ms-4 bi-download me-2"> Export</button>
+    </div>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name <button (click)="sortCustomers('name')" class="btn btn-default"> <i [ngClass]="displaySort('name')"></i></button></th>
+                <th>Email<button (click)="sortCustomers('email')"class="btn btn-default"><i [ngClass]="displaySort('email')"></i></button></th>
+                <th>Phone</th>
+                <th>Country<button (click)="sortCustomers('country_name')"class="btn btn-default"><i [ngClass]="displaySort('country_name')"></i></button></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let customer of customers">
+                <td>{{customer.name}}</td>
+                <td>{{customer.email}}</td>
+                <td>{{customer.phone}}</td>
+                <td>{{customer.country_name}}</td>
+            </tr>
+        </tbody>
+    </table>
 </div>
-
-<table class="table">
-    <thead>
-        <tr>
-            <th>Name <button (click)="sortCustomers('name')">{{displaySort('name')}}</button></th>
-            <th>Email<button (click)="sortCustomers('email')">{{displaySort('email')}}</button></th>
-            <th>Phone</th>
-            <th>Country<button (click)="sortCustomers('country_name')">{{displaySort('country_name')}}</button></th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr *ngFor="let customer of customers">
-            <td>{{customer.name}}</td>
-            <td>{{customer.email}}</td>
-            <td>{{customer.phone}}</td>
-            <td>{{customer.country_name}}</td>
-        </tr>
-    </tbody>
-</table>

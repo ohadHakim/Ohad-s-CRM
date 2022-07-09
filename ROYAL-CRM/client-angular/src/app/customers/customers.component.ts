@@ -1,15 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, NgModule, OnInit } from '@angular/core';
 import { ApiService } from '../core/api.service';
-import {
-  Customer,
-  CustomerSort,
-  FilePath,
-  sortColumn,
-  sortDirection,
-} from '../shared/types';
+import { Customer, CustomerSort, FilePath, sortColumn } from '../shared/types';
 import { environment } from 'src/environments/environment';
-import { date } from 'joi';
-import { NgIfContext } from '@angular/common';
 
 @Component({
   selector: 'app-customers',
@@ -27,9 +19,8 @@ export class CustomersComponent implements OnInit {
   ngOnInit(): void {
     this.getCustomers();
     this.tableSort = {
-      name: 'ASC',
-      email: 'Default',
-      country_name: 'Default',
+      column: 'name',
+      dirAsc: true,
     };
   }
   getCustomers() {
@@ -71,13 +62,13 @@ export class CustomersComponent implements OnInit {
   }
 
   sortCustomers(column: sortColumn) {
-    let direction: sortDirection = this.tableSort[column];
-    if (direction === 'Default' || direction === 'DESC') {
-      direction = 'ASC';
-    } else if (direction === 'ASC') {
-      direction = 'DESC';
+    if (this.tableSort.column === column) {
+      this.tableSort.dirAsc = !this.tableSort.dirAsc;
+    } else {
+      this.tableSort.column = column;
+      this.tableSort.dirAsc = true;
     }
-    this.tableSort[column] = direction;
+    const direction = this.tableSort.dirAsc ? 'ASC' : 'DESC';
     this.apiService.getSortedCustomers(column, direction).subscribe({
       next: (data: Array<Customer>) => {
         this.customers = data;
@@ -86,14 +77,18 @@ export class CustomersComponent implements OnInit {
     });
   }
   displaySort(column: sortColumn): string {
-    const direction: sortDirection = this.tableSort[column];
-    switch (direction) {
-      case 'ASC':
-        return 'A';
-      case 'DESC':
-        return 'D';
-      default:
-        return '-';
+    if (this.tableSort.column === column) {
+      return this.tableSort.dirAsc ? 'bi bi-chevron-up' : 'bi bi-chevron-down';
     }
+    return 'bi bi-chevron-expand';
+    // const direction: sortDirection = this.tableSort[column];
+    // switch (direction) {
+    //   case 'ASC':
+    //     return 'A';
+    //   case 'DESC':
+    //     return 'D';
+    //   default:
+    //     return '-';
+    // }
   }
 }
