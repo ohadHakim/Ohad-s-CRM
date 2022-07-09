@@ -1,0 +1,10 @@
+@import "../common/bootstrap-variables";
+@import "../common/bootstrap";
+
+.light-theme {
+    background-color: #141719;
+
+    & {
+        color: #fff;
+    }
+}
