@@ -17,3 +17,9 @@ export interface CustomerSort {
   column: sortColumn;
   dirAsc: boolean;
 }
+
+export type themeValues = 'light-theme' | 'dark-theme';
+export interface Theme {
+  title: string;
+  value: themeValues;
+}
