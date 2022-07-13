@@ -3,27 +3,85 @@
 </p> -->
 
 
-<h2 class="my-4 py-4">Customers <small class="text-secondery">({{customersTotal()}})</small> </h2>
+<h2 class="my-4 py-4">
+    Customers <small class="text-secondary">({{customersTotal()}})</small>
+</h2>
 
-<div class="p-3">
+<div class="section-bg p-3">
 
-    <div>
-        <input (keydown)="findCustomer($event)" [(ngModel)]="searchFieldValue" type="text"
-            placeholder="Search by name, email, country">
-            <button (click)="clearSearch()">
-                <i class="bi-x-lg"></i>
+    <div class="d-flex mb-4">
+        <div class="me-auto p-2">
+            <div class="input-group">
+                <input (keydown)="findCustomer($event)" [(ngModel)]="searchFieldValue"
+                    type="text" placeholder="Search by name, email, country"
+                    class="form-control">
+                <button (click)="clearSearch()" class="btn btn-outline-secondary" type="button"
+                    id="button-addon2"><i class="bi-x-lg"></i></button>
+            </div>
+        </div>
+        <div class="p-2">
+            <button (click)="exportCustomersData()" class="btn btn-primary">
+                <i class="bi-download pe-2"></i>
+                Export
             </button>
-
-        <button (click)="exportCustomersData()" class=" btn btn-primary ms-4 bi-download me-2"> Export</button>
+        </div>
+        <div class="p-2">
+            <button (click)="toggleForm()" class="btn btn-primary">
+                <i class="bi-person-plus pe-2"></i>
+                Add Customer
+            </button>
+        </div>
     </div>
+
+    <div *ngIf="showForm">
+        <form [formGroup]="customerForm" (ngSubmit)="onSubmit()">
+            <div class="mb-3">
+                <label for="" class="form-label">Name</label>
+                <input formControlName="name" type="text" class="form-control">
+            </div>
+            <div class="mb-3">
+                <label for="" class="form-label">Email</label>
+                <input formControlName="email" type="email" class="form-control">
+            </div>
+            <div class="mb-3">
+                <label for="" class="form-label">Phone</label>
+                <input formControlName="phone" type="text" class="form-control">
+            </div>
+            <div class="mb-3">
+                <label for="" class="form-label">Country</label>
+                <select formControlName="country_id" class="form-select">
+                    <option *ngFor="let country of countries" [ngValue]='country.id'> {{country.name}}</option> 
+                </select>
+            </div>
+            <button [disabled]="!customerForm.valid" type="submit"
+                class="btn btn-primary">Add</button>
+        </form>
+    </div>
+
+
 
     <table class="table">
         <thead>
             <tr>
-                <th>Name <button (click)="sortCustomers('name')" class="btn btn-default"> <i [ngClass]="displaySort('name')"></i></button></th>
-                <th>Email<button (click)="sortCustomers('email')"class="btn btn-default"><i [ngClass]="displaySort('email')"></i></button></th>
+                <th>
+                    Name
+                    <button (click)="sortCustomers('name')" class="btn btn-default">
+                        <i [ngClass]="displaySort('name')"></i>
+                    </button>
+                </th>
+                <th>
+                    Email
+                    <button (click)="sortCustomers('email')" class="btn btn-default">
+                        <i [ngClass]="displaySort('email')"></i>
+                    </button>
+                </th>
                 <th class="align-middle">Phone</th>
-                <th>Country<button (click)="sortCustomers('country_name')"class="btn btn-default"><i [ngClass]="displaySort('country_name')"></i></button></th>
+                <th>
+                    Country
+                    <button (click)="sortCustomers('country_name')" class="btn btn-default">
+                        <i [ngClass]="displaySort('country_name')"></i>
+                    </button>
+                </th>
             </tr>
         </thead>
         <tbody>

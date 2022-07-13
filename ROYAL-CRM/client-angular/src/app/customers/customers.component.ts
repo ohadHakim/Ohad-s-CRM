@@ -1,7 +1,14 @@
 import { Component, NgModule, OnInit } from '@angular/core';
 import { ApiService } from '../core/api.service';
-import { Customer, CustomerSort, FilePath, sortColumn } from '../shared/types';
+import {
+  Country,
+  Customer,
+  CustomerSort,
+  FilePath,
+  sortColumn,
+} from '../shared/types';
 import { environment } from 'src/environments/environment';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-customers',
@@ -10,14 +17,49 @@ import { environment } from 'src/environments/environment';
 })
 export class CustomersComponent implements OnInit {
   customers!: Array<Customer>;
+  countries!: Array<Country>;
   searchTerm!: string;
   searchFieldValue!: string;
   tableSort!: CustomerSort;
+  showForm = false;
+
+  customerForm = new FormGroup({
+    name: new FormControl('', {
+      validators: Validators.required,
+    }),
+    email: new FormControl('', {
+      validators: [Validators.required, Validators.email],
+    }),
+    phone: new FormControl('', {
+      validators: Validators.required,
+    }),
+    country_id: new FormControl(0, {
+      validators: Validators.required,
+    }),
+  });
+
+  onSubmit() {
+    if (!this.customerForm.valid) {
+      return;
+    }
+    this.apiService.addCustomer(this.customerForm.value).subscribe({
+      next: (data: Customer) => {
+        this.getCustomers;
+        this.showForm = false;
+      },
+      error: (err) => console.error(err),
+    });
+  }
+
+  toggleForm() {
+    this.showForm = !this.showForm;
+  }
 
   constructor(private apiService: ApiService) {}
 
   ngOnInit(): void {
     this.getCustomers();
+    this.getCountries();
     this.tableSort = {
       column: 'name',
       dirAsc: true,
@@ -30,6 +72,14 @@ export class CustomersComponent implements OnInit {
       },
       error: (err) => console.log(err),
       complete: () => console.log(`complete`),
+    });
+  }
+  getCountries() {
+    this.apiService.getCountries().subscribe({
+      next: (data: Array<Country>) => {
+        this.countries = data;
+      },
+      error: (err) => console.log(err),
     });
   }
   customersTotal(): number {

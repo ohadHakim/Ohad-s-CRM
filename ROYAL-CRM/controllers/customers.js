@@ -13,15 +13,15 @@ module.exports = {
       phone: joi
         .string()
         .required()
-        .regex(/^[0-9]\d{8,11}$/),
+        .regex(/^[0-9]?[-]?\d{8,11}$/),
       email: joi
         .string()
         .required()
         .regex(/(\w[-._\w]*\w@\w[-._\w]*\w\.\w{2,3})/),
-      country: joi.number().required(),
+      country_id: joi.number().required(),
     });
 
-    const { error } = schema.validate(qs);
+    const { error, value } = schema.validate(qs);
     if (error) {
       res.send(`error adding customer: ${error}`);
       return;
@@ -34,11 +34,13 @@ module.exports = {
         qs.name,
         qs.phone,
         qs.email,
-        qs.country,
+        qs.country_id,
       ]); //[rows,fields]
-      res.send(result[0]);
+      value.id = result[0].insertId;
+      res.json(value);
     } catch (err) {
       console.log(err);
+      return;
     }
   },
   customersList: async function (req, res, next) {

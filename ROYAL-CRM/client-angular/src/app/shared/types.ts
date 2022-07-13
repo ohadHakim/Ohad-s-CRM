@@ -3,8 +3,21 @@ export interface Customer {
   name: string;
   phone: string;
   email: string;
-  country_id: number;
+  country_id: string;
   country_name: string;
+  country_code: string;
+}
+
+export interface addCustomer {
+  name?: string | null;
+  phone?: string | null;
+  email?: string | null;
+  country_id?: number | null;
+}
+
+export interface Country {
+  id: number;
+  name: string;
   country_code: string;
 }
 export interface FilePath {

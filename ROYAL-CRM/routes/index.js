@@ -18,11 +18,13 @@ router.get("/logout", mwAuth, function (req, res, next) {
     .status(200)
     .send("Successfully logged out.");
 });
+
 /* GET home page. */
 router.get("/", mwAuth, function (req, res, next) {
   res.send("This is the HOME page, use /customers/home /products/home /orders");
 });
 
+/* Chat */
 router.get("/chat", mwAuth, function (req, res, next) {
   const filePath = fileMgmt.getHtmlFileName("chat.html");
   res.sendFile(filePath);
