@@ -44,7 +44,7 @@ export class CustomersComponent implements OnInit {
     }
     this.apiService.addCustomer(this.customerForm.value).subscribe({
       next: (data: Customer) => {
-        this.getCustomers;
+        this.getCustomers();
         this.showForm = false;
       },
       error: (err) => console.error(err),
