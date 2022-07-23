@@ -6,6 +6,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { AuthService } from 'src/app/core/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -13,7 +14,7 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
   styleUrls: ['./login.component.scss'],
 })
 export class LoginComponent implements OnInit, AfterViewInit {
-  constructor() {}
+  constructor(private authService: AuthService) {}
 
   ngOnInit(): void {}
 
@@ -32,6 +33,12 @@ export class LoginComponent implements OnInit, AfterViewInit {
   }
 
   onSubmit() {
-    console.log(this.loginForm.value);
+    // console.log(this.loginForm.value);
+    if (!this.loginForm.valid) {
+      return;
+    }
+    this.authService.login(this.loginForm.value).subscribe({
+      error: (err) => console.error(err),
+    });
   }
 }
