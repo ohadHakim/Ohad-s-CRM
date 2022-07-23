@@ -23,27 +23,28 @@ module.exports = {
 
     const sql = "SELECT * FROM users WHERE email=?";
     try {
-      const result = await database.getConnection(sql, [reqBody.email]);
-      const rows = result[0];
+      const result = await database.getConnection(sql, [value.email]);
+      const user = result[0][0];
       const validPass = await bcrypt.compare(
-        reqBody.password,
-        rows[0].password_hash
+        value.password,
+        user.password_hash
       );
       if (!validPass) throw "Invalid password";
+
+      const param = { email: value.email };
+      const token = jwt.sign(param, config.JWT_SECRET, { expiresIn: "75000s" });
+
+      res.json({
+        token: token,
+        id: user.id,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        email: user.email,
+      });
     } catch (err) {
       console.log(`Error: ${err}`);
       res.status(401).send("Unauthorized");
       return;
     }
-
-    const param = { email: reqBody.email };
-    const token = jwt.sign(param, config.JWT_SECRET, { expiresIn: "75000s" });
-
-    res
-      .cookie("access_token", token, {
-        httponly: true,
-        secure: true,
-      })
-      .send("Welcome, you are now logged in!");
   },
 };
