@@ -30,22 +30,11 @@ module.exports = {
     const sql = "SELECT * FROM products ORDER BY name ASC";
 
     try {
-      // const connection = await database.getConnection();
       const result = await database.getConnection(sql); //[rows,fields]
-      res.send(result[0]);
+      res.json(result[0]);
     } catch (err) {
       console.log(err);
     }
-
-    // database.pool.getConnection(function (connErr, connection) {
-    //   if (connErr) throw connErr;
-
-    //   connection.query(sql, function (sqlErr, result, fields) {
-    //     if (sqlErr) throw sqlErr;
-
-    //     res.send(result);
-    //   });
-    // });
   },
   exportProducts: async function (req, res, next) {
     const sql =

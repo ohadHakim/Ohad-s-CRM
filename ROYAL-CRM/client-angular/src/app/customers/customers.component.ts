@@ -22,6 +22,7 @@ export class CustomersComponent implements OnInit {
   searchFieldValue!: string;
   tableSort!: CustomerSort;
   showForm = false;
+  showNotification = false;
 
   customerForm = new FormGroup({
     name: new FormControl('', {
@@ -45,10 +46,16 @@ export class CustomersComponent implements OnInit {
     this.apiService.addCustomer(this.customerForm.value).subscribe({
       next: (data: Customer) => {
         this.getCustomers();
-        this.showForm = false;
+        this.showNotification = true;
       },
       error: (err) => console.error(err),
     });
+  }
+
+  notificationClosed(state: boolean) {
+    this.showForm = false;
+    this.customerForm.reset();
+    this.showNotification = state;
   }
 
   toggleForm() {
@@ -74,6 +81,7 @@ export class CustomersComponent implements OnInit {
       complete: () => console.log(`complete`),
     });
   }
+
   getCountries() {
     this.apiService.getCountries().subscribe({
       next: (data: Array<Country>) => {
@@ -131,14 +139,5 @@ export class CustomersComponent implements OnInit {
       return this.tableSort.dirAsc ? 'bi bi-chevron-up' : 'bi bi-chevron-down';
     }
     return 'bi bi-chevron-expand';
-    // const direction: sortDirection = this.tableSort[column];
-    // switch (direction) {
-    //   case 'ASC':
-    //     return 'A';
-    //   case 'DESC':
-    //     return 'D';
-    //   default:
-    //     return '-';
-    // }
   }
 }

@@ -2,7 +2,13 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { Country, Customer, FilePath, addCustomer } from '../shared/types';
+import {
+  Country,
+  Customer,
+  FilePath,
+  addCustomer,
+  Product,
+} from '../shared/types';
 
 @Injectable({
   providedIn: 'root',
@@ -39,5 +45,13 @@ export class ApiService {
   }
   getCountries(): Observable<Array<Country>> {
     return this.http.get<Array<Country>>(`${environment.serverUrl}/countries`);
+  }
+
+  getProductsList(): Observable<Array<Product>> {
+    return this.http.get<Array<Product>>(`${environment.serverUrl}/products`);
+  }
+
+  exportProducts(): Observable<FilePath> {
+    return this.http.get<FilePath>(`${environment.serverUrl}/products/export`);
   }
 }
