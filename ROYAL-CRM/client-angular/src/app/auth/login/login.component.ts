@@ -7,6 +7,7 @@ import {
 } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { AuthService } from 'src/app/core/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -14,7 +15,9 @@ import { AuthService } from 'src/app/core/auth.service';
   styleUrls: ['./login.component.scss'],
 })
 export class LoginComponent implements OnInit, AfterViewInit {
-  constructor(private authService: AuthService) {}
+  @ViewChild('emailField') firstField!: ElementRef;
+
+  constructor(private authService: AuthService, private router: Router) {}
 
   ngOnInit(): void {}
 
@@ -27,7 +30,6 @@ export class LoginComponent implements OnInit, AfterViewInit {
     }),
   });
 
-  @ViewChild('emailField') firstField!: ElementRef;
   ngAfterViewInit(): void {
     this.firstField.nativeElement.focus();
   }
@@ -38,6 +40,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
       return;
     }
     this.authService.login(this.loginForm.value).subscribe({
+      next: () => this.router.navigate(['/customers-component']),
       error: (err) => console.error(err),
     });
   }

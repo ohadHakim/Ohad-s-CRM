@@ -15,6 +15,8 @@ import { RegisterUser } from 'src/app/shared/types';
   styleUrls: ['./signup.component.scss'],
 })
 export class SignupComponent implements OnInit, AfterViewInit {
+  registerSuccess = false;
+
   signUpForm = new FormGroup({
     first_name: new FormControl('', {
       validators: Validators.required,
@@ -77,10 +79,12 @@ export class SignupComponent implements OnInit, AfterViewInit {
 
     this.apiService.register(details).subscribe({
       next: (data) => {
-        // todo: show message to user
-        console.log('registered');
+        this.registerSuccess = true;
       },
-      error: (err) => console.log(err),
+      error: (err) => {
+        this.registerSuccess = false;
+        console.log(err);
+      },
     });
   }
 }
