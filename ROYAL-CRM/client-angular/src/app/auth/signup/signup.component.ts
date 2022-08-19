@@ -40,6 +40,7 @@ export class SignupComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {}
 
   @ViewChild('first') firstField!: ElementRef;
+
   ngAfterViewInit(): void {
     this.firstField.nativeElement.focus();
   }

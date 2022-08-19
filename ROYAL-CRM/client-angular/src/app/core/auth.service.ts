@@ -49,8 +49,12 @@ export class AuthService implements CanActivateChild {
     return this.router.navigate(['login-component']);
   }
 
-  isLoggedIn() {
+  isLoggedIn(): boolean {
     const token = localStorage.getItem(this.tokenField);
-    return token && token.length > 0 ? true : false;
+    if (token && token.length > 0) {
+      this.apiService.setToken(token);
+      return true;
+    }
+    return false;
   }
 }
